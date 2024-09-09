@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Services Marketplace</title>
+    <link rel="stylesheet" href="/CSS/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Local Services Marketplace</h1>
+            <nav>
+                <ul>
+                    <li><a href="/home">Home</a></li>
+                    <li><a href="/services">Services</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="toggle-container">
+                <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <section id="hero">
+            <div class="hero-content">
+                <h2>Find the Best Local Services</h2>
+                <p>Discover top-rated professionals for all your needs</p>
+                <div class="hero-btns">
+                    <input type="text" placeholder="What service are you looking for?">
+                    <button>Search</button>
+                </div>
+            </div>
+        </section>
+        
+        <section id="featured-services">
+            <div class="container">
+                <h2>Featured Services</h2>
+                <div class="service-grid">
+                    <div class="service-card">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <img src="/Images/plumbing.jpg" alt="Plumbing Service" class="card-image">
+                                <h3>Plumbing</h3>
+                            </div>
+                            <div class="card-back">
+                                <p>Reliable plumbing services for all your needs.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-card">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <img src="/Images/cleaning.jpg" alt="Cleaning Service" class="card-image">
+                                <h3>Cleaning</h3>
+                            </div>
+                            <div class="card-back">
+                                <p>Professional cleaning services for your home and office.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-card">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <img src="/Images/gardening.jpg" alt="Gardening Service" class="card-image">
+                                <h3>Gardening</h3>
+                            </div>
+                            <div class="card-back">
+                                <p>Expert gardening services to keep your garden beautiful.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Local Services Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="/JS/script.js"></script>
+    <script src="theme-toggle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const heroSection = document.getElementById('hero');
+            const images = [
+                'url("/image1.png")',
+                'url("/image2.png")',
+                'url("/image3.png")',
+                'url("/image4.png")',
+                'url("/image5.png")',
+                'url("/image6.png")'
+            ];
+            let currentIndex = 0;
+
+            function changeBackgroundImage() {
+                heroSection.style.backgroundImage = images[currentIndex];
+                currentIndex = (currentIndex + 1) % images.length;
+            }
+
+            // Initial call to set the first image
+            changeBackgroundImage();
+
+            // Change image every 2 seconds
+            setInterval(changeBackgroundImage, 2000);
+        });
+    </script>
+</body>
+</html>

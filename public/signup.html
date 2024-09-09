@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Form</title>
+    <link rel="stylesheet" href="/CSS/signup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main">
+        <div class="signup">
+            <form action="/signup" method="post">
+                <label for="signup">Sign up</label>
+                <input type="text" name="username" placeholder="User name" required="" class="animated-input">
+                <input type="email" name="email" placeholder="Email" required="" class="animated-input">
+                <input type="password" name="password" placeholder="Password" required="" class="animated-input">
+                <input type="password" name="confirm_password" placeholder="Confirm password" required="" class="animated-input">
+                
+                <select name="role" id="role" class="animated-input" required="">
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="customer">Customer</option>
+                    <option value="service_provider">Service Provider</option>
+                </select>
+                
+                <div id="customer-fields" class="role-specific-fields">
+                    <input type="text" name="address" placeholder="Address" class="animated-input">
+                    <input type="text" name="phone" placeholder="Phone Number" class="animated-input">
+                </div>
+                
+                <div id="service-provider-fields" class="role-specific-fields">
+                    <select name="country" id="country" class="animated-input">
+                        <option value="" disabled selected>Select your country</option>
+                    </select>
+                    <select name="location" id="location" class="animated-input">
+                        <option value="" disabled selected>Select your city</option>
+                    </select>
+                    <select name="service_type" id="service_type" class="animated-input">
+                        <option value="" disabled selected>Select type of service</option>
+                    </select>
+                    <input type="text" name="experience" placeholder="Years of Experience" class="animated-input">
+                </div>
+                
+                <button class="animated-button">Sign up</button>
+                <p>Already have an account? <a href="/login" class="animated-link">Login</a>.</p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const roleSelect = document.getElementById('role');
+        const customerFields = document.getElementById('customer-fields');
+        const serviceProviderFields = document.getElementById('service-provider-fields');
+        const countrySelect = document.getElementById('country');
+        const locationSelect = document.getElementById('location');
+        const serviceTypeSelect = document.getElementById('service_type');
+
+        // Service types
+        const serviceTypes = [
+            "Plumbing", "Electrical", "Cleaning", "Painting", "Carpentry",
+            "Gardening", "Tutoring", "Babysitting", "Catering", "Pet Care",
+            // Add more service types as needed
+        ];
+
+        // Populate service types dropdown
+        serviceTypes.forEach(service => {
+            let option = document.createElement('option');
+            option.value = service;
+            option.textContent = service;
+            serviceTypeSelect.appendChild(option);
+        });
+
+        roleSelect.addEventListener('change', function() {
+            if (this.value === 'customer') {
+                customerFields.style.display = 'block';
+                serviceProviderFields.style.display = 'none';
+
+        // Remove required attribute for service provider fields
+                countrySelect.removeAttribute('required');
+                locationSelect.removeAttribute('required');
+                serviceTypeSelect.removeAttribute('required');
+            } else if (this.value === 'service_provider') {
+                customerFields.style.display = 'none';
+                serviceProviderFields.style.display = 'block';
+
+        // Add required attribute for service provider fields
+                countrySelect.setAttribute('required', true);
+                locationSelect.setAttribute('required', true);
+                serviceTypeSelect.setAttribute('required', true);
+            } else {
+                customerFields.style.display = 'none';
+                serviceProviderFields.style.display = 'none';
+            }
+        });
+
+
+        // Fetch and populate countries and cities
+        async function fetchCountriesAndCities() {
+            try {
+                const response = await fetch('https://countriesnow.space/api/v0.1/countries');
+                const data = await response.json();
+                const countries = data.data;
+
+                // Populate country dropdown
+                countries.forEach(country => {
+                    let option = document.createElement('option');
+                    option.value = country.country;
+                    option.textContent = country.country;
+                    countrySelect.appendChild(option);
+                });
+
+                countrySelect.addEventListener('change', function() {
+                    const selectedCountry = this.value;
+                    const selectedCountryData = countries.find(c => c.country === selectedCountry);
+
+                    locationSelect.innerHTML = '<option value="" disabled selected>Select your city</option>'; // Reset city dropdown
+                    selectedCountryData.cities.forEach(city => {
+                        let option = document.createElement('option');
+                        option.value = city;
+                        option.textContent = city;
+                        locationSelect.appendChild(option);
+                    });
+
+                    locationSelect.disabled = false; // Enable city dropdown
+                });
+            } catch (error) {
+                console.error('Error fetching countries and cities:', error);
+            }
+        }
+
+        fetchCountriesAndCities();
+    </script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    color: #333;
+    background-color: #f5f5f5;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Header */
+header {
+    background-color: #007bff;
+    color: #fff;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    animation: slideIn 1s ease-out;
+}
+
+header .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+    transition: font-size 0.3s, text-shadow 0.3s ease-in-out;
+    font-size: 2rem;
+}
+
+/* Keyframes for colorShift animation in light mode */
+@keyframes colorShiftLight {
+    0% {
+        color: #007bff;
+    }
+    50% {
+        color: #ffffff;
+    }
+    100% {
+        color: #007bff;
+    }
+}
+
+/* Keyframes for colorShift animation in dark mode */
+@keyframes colorShiftDark {
+    0% {
+        color: black;
+    }
+    50% {
+        color: #ffffff;
+    }
+    100% {
+        color: black;
+    }
+}
+
+/* Light Mode */
+header h1 {
+    animation: colorShiftLight 1.3s infinite;
+}
+
+/* Dark Mode */
+body.dark-mode header h1 {
+    animation: colorShiftDark 1.3s infinite;
+}
+
+/* Other CSS as before */
+
+/* Navigation Styles */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s, transform 0.3s;
+}
+
+nav a:hover {
+    color: #ffd700;
+    transform: scale(1.1);
+}
+
+/* Advanced Navigation Animation */
+nav ul li {
+    position: relative;
+}
+
+nav ul li a {
+    overflow: hidden;
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+}
+
+nav ul li a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+    background: #ffd700;
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+}
+
+nav ul li a:hover::after {
+    transform: translateX(0);
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Active link styles */
+nav ul li a.active {
+    color: #ffd700; /* Highlight color for the active link */
+    font-weight: bold;
+    transform: scale(1.1); /* Optional: scale effect */
+}
+
+nav ul li a.active::after {
+    transform: translateX(0); /* Show the underline for the active link */
+}
+
+#theme-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+}
+
+#theme-toggle:hover {
+    color: #ffd700;
+    transform: rotate(360deg);
+}
+
+/* Hero Section */
+#hero {
+    position: relative;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    transition: background-image 1s ease-in-out;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    text-align: center;
+}
+
+.hero-content h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.hero-btns {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.hero-btns input {
+    padding: 0.75rem;
+    width: 60%;
+    border: 2px solid #007bff;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.hero-btns button {
+    padding: 0.75rem 1.5rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.hero-btns button:hover {
+    background-color: #0056b3;
+}
+
+/* Featured Services Section */
+#featured-services {
+    padding: 2rem 0;
+}
+
+#featured-services .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#featured-services h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.service-grid {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.service-card {
+    width: 200px; /* Adjust as needed */
+    height: 300px; /* Adjust as needed */
+    perspective: 1000px;
+    margin: 0.5rem;
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.service-card:hover .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.card-front {
+    background-color: #fff;
+    color: #000;
+}
+
+.card-back {
+    background-color: #007bff;
+    color: #fff;
+    transform: rotateY(180deg);
+}
+
+.card-image {
+    width: 100%;
+    height: 70%;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd; /* Optional: Adds a border between image and text */
+}
+
+.card-front h3 {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0.5rem;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.card-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    transform: rotateY(180deg);
+}
+
+/* Footer */
+footer {
+    background-color: #007bff;
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background-color: #333;
+    color: #f5f5f5;
+}
+
+body.dark-mode header {
+    background-color: #1a1a1a;
+}
+
+body.dark-mode nav a {
+    color: #f5f5f5;
+}
+
+body.dark-mode .hero-content h2, body.dark-mode .hero-content p {
+    color: #f5f5f5;
+}
+
+body.dark-mode .hero-btns input {
+    border-color: #1a1a1a;
+}
+
+body.dark-mode .hero-btns button {
+    background-color: #1a1a1a;
+}
+
+body.dark-mode .service-card {
+    background-color: #333;
+}
+
+body.dark-mode .card-back {
+    background-color: #1a1a1a;
+}
+
+body.dark-mode footer {
+    background-color: #1a1a1a;
+}

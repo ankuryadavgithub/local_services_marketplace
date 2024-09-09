@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Services Marketplace - Services</title>
+    <link rel="stylesheet" href="/CSS/services.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Local Services Marketplace</h1>
+            <nav>
+                <ul>
+                    <li><a href="/home">Home</a></li>
+                    <li><a href="/services" class="active">Services</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="toggle-container">
+                <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <section id="hero">
+            <div class="container">
+                <h2>Our Services</h2>
+                <p>Find top-rated professionals for all your needs.</p>
+                <div class="search-bar">
+                    <input type="text" placeholder="What service are you looking for?">
+                    <button>Search</button>
+                </div>
+            </div>
+        </section>
+        
+        <section id="filter-panel">
+            <div class="container">
+                <form>
+                    <select name="category">
+                        <option value="" disabled selected>Category</option>
+                        <option value="plumbing">Plumbing</option>
+                        <option value="cleaning">Cleaning</option>
+                        <option value="gardening">Gardening</option>
+                        <!-- Add more categories -->
+                    </select>
+                    <select name="location">
+                        <option value="" disabled selected>Location</option>
+                        <!-- Populate with locations -->
+                    </select>
+                    <select name="price">
+                        <option value="" disabled selected>Price Range</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    <select name="rating">
+                        <option value="" disabled selected>Rating</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars & Up</option>
+                        <option value="3">3 Stars & Up</option>
+                    </select>
+                    <button type="submit">Filter</button>
+                </form>
+            </div>
+        </section>
+        
+        <section id="services-list">
+            <div class="container">
+                <div class="service-card">
+                    <img src="/Images/plumbing.jpg" alt="Plumbing Service">
+                    <h3>Plumbing</h3>
+                    <p>Reliable plumbing services for all your needs.</p>
+                    <div class="service-info">
+                        <span>★★★★☆</span>
+                        <span>$50 - $100</span>
+                        <span>City, State</span>
+                    </div>
+                    <button>View More</button>
+                </div>
+                <!-- Add more service cards -->
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Local Services Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="/JS/script.js"></script>
+    <script src="theme-toggle.js"></script>
+</body>
+</html>
