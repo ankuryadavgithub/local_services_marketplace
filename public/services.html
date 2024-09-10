@@ -30,58 +30,48 @@
                 <h2>Our Services</h2>
                 <p>Find top-rated professionals for all your needs.</p>
                 <div class="search-bar">
-                    <input type="text" placeholder="What service are you looking for?">
-                    <button>Search</button>
+                    <input type="text" id="search-input" placeholder="What service are you looking for?">
+                    <button id="search-btn">Search</button>
                 </div>
-            </div>
-        </section>
-        
-        <section id="filter-panel">
-            <div class="container">
-                <form>
-                    <select name="category">
+                
+                <!-- Filters Form -->
+                <form id="filter-form">
+                    <select id="category-filter" name="category">
                         <option value="" disabled selected>Category</option>
                         <option value="plumbing">Plumbing</option>
                         <option value="cleaning">Cleaning</option>
                         <option value="gardening">Gardening</option>
                         <!-- Add more categories -->
                     </select>
-                    <select name="location">
+                
+                    <select id="location-filter" name="location">
                         <option value="" disabled selected>Location</option>
-                        <!-- Populate with locations -->
+                        <option value="New York">New York</option>
+                        <option value="Los Angeles">Los Angeles</option>
+                        <!-- Add more locations -->
                     </select>
-                    <select name="price">
+                
+                    <select id="price-filter" name="priceRange">
                         <option value="" disabled selected>Price Range</option>
                         <option value="low">Low</option>
                         <option value="medium">Medium</option>
                         <option value="high">High</option>
                     </select>
-                    <select name="rating">
+                
+                    <select id="rating-filter" name="rating">
                         <option value="" disabled selected>Rating</option>
                         <option value="5">5 Stars</option>
                         <option value="4">4 Stars & Up</option>
                         <option value="3">3 Stars & Up</option>
                     </select>
-                    <button type="submit">Filter</button>
+                
+                    <button type="submit" id="filter-btn">Filter</button>
                 </form>
-            </div>
-        </section>
-        
-        <section id="services-list">
-            <div class="container">
-                <div class="service-card">
-                    <img src="/Images/plumbing.jpg" alt="Plumbing Service">
-                    <h3>Plumbing</h3>
-                    <p>Reliable plumbing services for all your needs.</p>
-                    <div class="service-info">
-                        <span>★★★★☆</span>
-                        <span>$50 - $100</span>
-                        <span>City, State</span>
-                    </div>
-                    <button>View More</button>
+                
+                <!-- Service Cards Container -->
+                <div id="services-container">
+                    <!-- Service cards will be dynamically loaded here -->
                 </div>
-                <!-- Add more service cards -->
-            </div>
         </section>
     </main>
     
@@ -95,3 +85,46 @@
     <script src="theme-toggle.js"></script>
 </body>
 </html>
+
+<script>
+    document.getElementById('search-btn').addEventListener('click', async () => {
+        const query = document.getElementById('search-input').value;
+        const response = await fetch(`/services/search?query=${query}`);
+        const services = await response.json();
+        renderServices(services);
+    });
+    
+    document.getElementById('filter-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const category = document.getElementById('category-filter').value;
+        const location = document.getElementById('location-filter').value;
+        const priceRange = document.getElementById('price-filter').value;
+        const rating = document.getElementById('rating-filter').value;
+    
+        const queryParams = new URLSearchParams({ category, location, priceRange, rating });
+        const response = await fetch(`/services/filter?${queryParams}`);
+        const services = await response.json();
+        renderServices(services);
+    });
+    
+    function renderServices(services) {
+        const container = document.getElementById('services-container');
+        container.innerHTML = ''; // Clear previous results
+        services.forEach(service => {
+            const serviceCard = `
+                <div class="service-card">
+                    <h3>${service.name}</h3>
+                    <p>${service.description}</p>
+                    <div class="service-info">
+                        <span>${'★'.repeat(service.rating)}</span>
+                        <span>${service.priceRange}</span>
+                        <span>${service.location}</span>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += serviceCard;
+        });
+    }
+    </script>
+    

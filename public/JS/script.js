@@ -14,7 +14,6 @@
         });
     });
 
-
 document.addEventListener('DOMContentLoaded', () => {
     // Theme Toggle Script
     const themeToggle = document.getElementById('theme-toggle');

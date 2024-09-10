@@ -137,3 +137,39 @@ app.post('/login', async (req, res) => {
         res.status(500).send('Error occurred during login');
     }
 });
+
+// Handle search request
+app.get('/services/search', async (req, res) => {
+    const { query } = req.query;
+    
+    try {
+        const services = await db.collection('services').find({
+            name: { $regex: query, $options: 'i' }  // Case-insensitive search
+        }).toArray();
+        res.json(services);
+    } catch (err) {
+        console.error('Error fetching services:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+// Handle filter request
+app.get('/services/filter', async (req, res) => {
+    const { category, location, priceRange, rating } = req.query;
+    const filters = {};
+
+    if (category) filters.category = category;
+    if (location) filters.location = location;
+    if (priceRange) filters.priceRange = priceRange;
+    if (rating) filters.rating = { $gte: parseInt(rating) };
+
+    try {
+        const services = await db.collection('services').find(filters).toArray();
+        res.json(services);
+    } catch (err) {
+        console.error('Error fetching filtered services:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+
