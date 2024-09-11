@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Find top-rated local services including plumbing, cleaning, and gardening in your area. Discover and connect with the best professionals today.">
     <title>Local Services Marketplace</title>
+    <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/CSS/styles.css">
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -23,19 +27,23 @@
             </div>
         </div>
     </header>
-    
+
     <main>
         <section id="hero">
             <div class="hero-content">
                 <h2>Find the Best Local Services</h2>
                 <p>Discover top-rated professionals for all your needs</p>
-                <div class="hero-btns">
-                    <input type="text" placeholder="What service are you looking for?">
-                    <button>Search</button>
-                </div>
+                <form id="searchForm" action="/services/search" method="GET">
+                    <input type="text" id="searchQuery" name="query" placeholder="What service are you looking for?">
+                    <button type="submit">Search</button>
+                </form>                                          
             </div>
         </section>
-        
+        <section id="search-results">
+            <!-- Results will be populated here -->
+        </section>
+        <!-- Add a hidden loader -->
+        <div id="loader" class="loader" style="display: none;"></div>
         <section id="featured-services">
             <div class="container">
                 <h2>Featured Services</h2>
@@ -76,14 +84,22 @@
                 </div>
             </div>
         </section>
+        
     </main>
-    
+
     <footer>
-        <div class="container">
-            <p>&copy; 2024 Local Services Marketplace. All rights reserved.</p>
-        </div>
-    </footer>
-    
+    <div class="container">
+        <p>&copy; 2024 Local Services Marketplace. All rights reserved.</p>
+        <nav>
+            <ul>
+                <li><a href="/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/terms-of-service">Terms of Service</a></li>
+            </ul>
+        </nav>
+    </div>
+</footer>
+
+
     <script src="/JS/script.js"></script>
     <script src="theme-toggle.js"></script>
     <script>
@@ -110,6 +126,49 @@
             // Change image every 2 seconds
             setInterval(changeBackgroundImage, 2000);
         });
+// Handle form submission without reloading the page
+
+    document.getElementById('searchForm').addEventListener('submit', async function (e) {
+        e.preventDefault();  // Prevent default form submission
+        const query = document.getElementById('searchQuery').value;
+
+        // Show loader
+        const loader = document.getElementById('loader');
+        loader.style.display = 'block';
+
+        // Fetch the search results from the server
+        const response = await fetch(`/services/search?query=${encodeURIComponent(query)}`);
+        const results = await response.json();
+
+        // Hide loader
+        loader.style.display = 'none';
+
+        // Populate search results
+        const resultsContainer = document.getElementById('search-results');
+        resultsContainer.innerHTML = ''; // Clear previous results
+
+        if (results.length > 0) {
+            results.forEach(service => {
+                const serviceElement = document.createElement('div');
+                serviceElement.className = 'result-card'; // Add class for styling
+                serviceElement.innerHTML = `
+                    <h3>${service.name}</h3>
+                    <p>${service.description}</p>
+                    <p class="location">Location: ${service.location}</p>
+                    <p class="price">Price: ${service.priceRange}</p>
+                    <p class="rating">Rating: ${service.rating}</p>
+                `;
+                resultsContainer.appendChild(serviceElement);
+            });
+        } else {
+            resultsContainer.innerHTML = '<p>No services found</p>';
+        }
+    });
+
+
+
+
     </script>
 </body>
+
 </html>

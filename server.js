@@ -66,6 +66,10 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+// app.get('/search-results', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'public', 'search-results.html'));
+// });
+
 // Signup Route
 app.post('/signup', async (req, res) => {
     const { username, email, password, confirm_password, role, address, phone, country, location, service_type, experience } = req.body;
@@ -172,4 +176,21 @@ app.get('/services/filter', async (req, res) => {
     }
 });
 
+// Handle search request
+app.get('/services/search', async (req, res) => {
+    const { query } = req.query;
+    
+    try {
+        // Search for services matching the query in MongoDB
+        const services = await db.collection('services').find({
+            name: { $regex: query, $options: 'i' }  // Case-insensitive search
+        }).toArray();
+        
+        // Return search results as JSON
+        res.json(services);
+    } catch (err) {
+        console.error('Error fetching services:', err);
+        res.status(500).send('Server error');
+    }
+});
 

@@ -23,7 +23,7 @@ body {
     align-items: center;
     min-height: 100vh;
     font-family: 'Roboto', sans-serif;
-    background: url('/public/Images/login-bg.jpeg') no-repeat center top;
+    background: url('/Images/login-bg.jpeg') no-repeat center top;
     background-size:cover;
     
 }

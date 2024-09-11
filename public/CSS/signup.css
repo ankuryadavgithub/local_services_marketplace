@@ -17,7 +17,7 @@ body {
     align-items: center;
     min-height: 100vh;
     font-family: 'Roboto', sans-serif;
-    background: url('/public/Images/signup-bg.jpg') no-repeat center center fixed;
+    background: url('/Images/signup-bg.jpg') no-repeat center center fixed;
     background-size: cover;}
 
 .main {

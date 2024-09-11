@@ -24,3 +24,4 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToggle.textContent = isDarkMode ? '🌞' : '🌙';
     });
 })
+
