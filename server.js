@@ -1,11 +1,13 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose')
 const path = require('path');
 const bcrypt = require('bcrypt');  // To securely store and check passwords
 
+
 const app = express();
-const port = 3000;
+const port = 8000;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,7 +34,6 @@ async function connectToMongoDB() {
         process.exit(1); // Exit the process with failure
     }
 }
-
 // Call the function to connect to MongoDB
 connectToMongoDB();
 
@@ -61,6 +62,11 @@ app.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'about.html'));
 });
 
+// Serve contact page
+app.get('/contact', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'contact.html'));
+});
+
 // Serve the login page
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -69,6 +75,11 @@ app.get('/login', (req, res) => {
 // app.get('/search-results', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'public', 'search-results.html'));
 // });
+
+// Serve the service form page for service providers
+app.get('/service-form', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'service_form.html'));
+});
 
 // Signup Route
 app.post('/signup', async (req, res) => {
@@ -95,6 +106,7 @@ app.post('/signup', async (req, res) => {
             email,
             password: hashedPassword,
             role,
+            hasSubmittedService: role === 'service_provider' ? false : undefined, 
             address: role === 'customer' ? address : undefined,
             phone: role === 'customer' ? phone : undefined,
             country: role === 'service_provider' ? country : undefined,
@@ -120,27 +132,74 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Check if user exists
         const user = await db.collection('users').findOne({ email });
         if (!user) {
             return res.status(400).send('User not found');
         }
 
-        // Check if password is correct
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        console.log(`Password Valid: ${isPasswordValid}`);  // Debugging log
-
         if (!isPasswordValid) {
             return res.status(400).send('Invalid password');
         }
 
-        // Redirect to the home page or dashboard after successful login
-        res.redirect('/home'); // Redirecting to the home page
+        // Redirect based on role and submission status
+        if (user.role === 'service_provider') {
+            if (!user.hasSubmittedService) {
+                // Redirect to service form if not submitted
+                return res.redirect('/service-form');
+            }
+            // Redirect to home page if already submitted
+            return res.redirect('/home');
+        }
+
+        // Redirect customers to home page
+        res.redirect('/home');
     } catch (err) {
         console.error('Error occurred during login:', err);
         res.status(500).send('Error occurred during login');
     }
 });
+
+// Service Submission Route
+app.post('/submit-service', async (req, res) => {
+    const { name, category, location, priceRange, description, email } = req.body; // Ensure email is captured here
+    console.log("Submission Data:", req.body); // Log the entire request body for debugging
+
+    try {
+        // Find the user by email
+        const user = await db.collection('users').findOne({ email });
+        console.log("Found User:", user); // Log the found user for debugging
+
+        if (!user) {
+            return res.status(400).send('User not found');
+        }
+
+        // Insert the service into the services collection
+        const service = {
+            name,
+            category,
+            location,
+            priceRange,
+            description,
+            rating: 0, // Initialize rating
+        };
+
+        await db.collection('services').insertOne(service);
+
+        // Update the user's hasSubmittedService status
+        await db.collection('users').updateOne(
+            { email },
+            { $set: { hasSubmittedService: true } }
+        );
+
+        // Redirect to home page after submission
+        res.redirect('/home');
+    } catch (err) {
+        console.error('Error occurred while submitting service:', err);
+        res.status(500).send('Error occurred while submitting service');
+    }
+});
+
 
 // Handle search request
 app.get('/services/search', async (req, res) => {

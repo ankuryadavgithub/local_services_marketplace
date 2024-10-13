@@ -1,0 +1,93 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Style */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Light background for contrast */
+    color: #333; /* Dark text for readability */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of the viewport */
+}
+
+/* Form Container */
+.form-container {
+    background-color: #fff; /* White background for the form */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 20px;
+    width: 400px; /* Fixed width for the form */
+    text-align: left; /* Align text to the left */
+}
+
+/* Heading Style */
+.form-container h2 {
+    text-align: center; /* Center the heading */
+    margin-bottom: 20px; /* Space below the heading */
+    color: #007bff; /* Blue color for the heading */
+}
+
+/* Label Styles */
+label {
+    font-weight: bold; /* Bold labels */
+    margin-bottom: 5px; /* Space below labels */
+    display: block; /* Make labels block elements */
+}
+
+/* Input and Textarea Styles */
+input[type="text"],
+input[type="email"],
+textarea,
+select {
+    width: 100%; /* Full width inputs */
+    padding: 10px; /* Padding inside inputs */
+    margin-bottom: 15px; /* Space below inputs */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 4px; /* Slightly rounded corners */
+    transition: border-color 0.3s; /* Transition effect for border color */
+}
+
+/* Input Focus Styles */
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #007bff; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+/* Textarea Specific Styles */
+textarea {
+    resize: vertical; /* Allow vertical resizing only */
+}
+
+/* Button Styles */
+button {
+    width: 100%; /* Full width button */
+    padding: 10px; /* Padding inside button */
+    background-color: #007bff; /* Blue background */
+    color: #fff; /* White text */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Larger font size */
+    transition: background-color 0.3s; /* Transition effect for background color */
+}
+
+/* Button Hover Styles */
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Responsive Styles */
+@media (max-width: 500px) {
+    .form-container {
+        width: 90%; /* Full width on small screens */
+        padding: 15px; /* Adjust padding */
+    }
+}

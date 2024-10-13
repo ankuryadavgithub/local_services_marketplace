@@ -5,24 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Local Services Marketplace - Services</title>
     <link rel="stylesheet" href="/CSS/services.css">
+    <link rel="stylesheet" href="/CSS/darkmode.css">
+
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Local Services Marketplace</h1>
-            <nav>
-                <ul>
-                    <li><a href="/home">Home</a></li>
-                    <li><a href="/services" class="active">Services</a></li>
-                    <li><a href="/about">About Us</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-            <div class="toggle-container">
-                <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
-            </div>
-        </div>
-    </header>
+    <div id="header"></div> <!-- Placeholder for Header -->
     
     <main>
         <section id="hero">
@@ -40,14 +27,25 @@
                         <option value="" disabled selected>Category</option>
                         <option value="plumbing">Plumbing</option>
                         <option value="cleaning">Cleaning</option>
-                        <option value="gardening">Gardening</option>
+                        <option value="gardening">Gardening</option>      
+                        <option value="catering">Catering</option>      
+                        <option value="">House Cleaning</option>      
+                        <option value="Painting">Painting</option>      
                         <!-- Add more categories -->
                     </select>
                 
                     <select id="location-filter" name="location">
                         <option value="" disabled selected>Location</option>
-                        <option value="New York">New York</option>
-                        <option value="Los Angeles">Los Angeles</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="Chennai">Chennai</option>
+                        <option value="Kolkata">Kolkata</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Ahmedabad">Ahmedabad</option>
+                        <option value="Jaipur">Jaipur</option>
+                        <option value="Lucknow">Lucknow</option>
                         <!-- Add more locations -->
                     </select>
                 
@@ -63,6 +61,9 @@
                         <option value="5">5 Stars</option>
                         <option value="4">4 Stars & Up</option>
                         <option value="3">3 Stars & Up</option>
+                        <option value="3">2 Stars & Up</option>
+                        <option value="3">1 Stars & Up</option>
+                        <option value="3">0 Stars & Up</option>
                     </select>
                 
                     <button type="submit" id="filter-btn">Filter</button>
@@ -75,11 +76,7 @@
         </section>
     </main>
     
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Local Services Marketplace. All rights reserved.</p>
-        </div>
-    </footer>
+    <div id="footer"></div> <!-- Placeholder for Footer -->
     
     <script src="/JS/script.js"></script>
     <script src="theme-toggle.js"></script>

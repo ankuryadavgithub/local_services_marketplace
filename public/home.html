@@ -8,25 +8,11 @@
     <title>Local Services Marketplace</title>
     <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/CSS/styles.css">
+    <link rel="stylesheet" href="/CSS/darkmode.css">
 </head>
 
 <body>
-    <header>
-        <div class="container">
-            <h1>Local Services Marketplace</h1>
-            <nav>
-                <ul>
-                    <li><a href="/home">Home</a></li>
-                    <li><a href="/services">Services</a></li>
-                    <li><a href="/about">About Us</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-            <div class="toggle-container">
-                <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
-            </div>
-        </div>
-    </header>
+    <div id="header"></div> <!-- Placeholder for Header -->
 
     <main>
         <section id="hero">
@@ -87,17 +73,7 @@
         
     </main>
 
-    <footer>
-    <div class="container">
-        <p>&copy; 2024 Local Services Marketplace. All rights reserved.</p>
-        <nav>
-            <ul>
-                <li><a href="/privacy-policy">Privacy Policy</a></li>
-                <li><a href="/terms-of-service">Terms of Service</a></li>
-            </ul>
-        </nav>
-    </div>
-</footer>
+    <div id="footer"></div> <!-- Placeholder for Footer -->
 
 
     <script src="/JS/script.js"></script>
@@ -128,45 +104,46 @@
         });
 // Handle form submission without reloading the page
 
-    document.getElementById('searchForm').addEventListener('submit', async function (e) {
-        e.preventDefault();  // Prevent default form submission
-        const query = document.getElementById('searchQuery').value;
+document.getElementById('searchForm').addEventListener('submit', async function (e) {
+    e.preventDefault();  // Prevent default form submission
+    const query = document.getElementById('searchQuery').value;
 
-        // Show loader
-        const loader = document.getElementById('loader');
-        loader.style.display = 'block';
+    // Show loader
+    const loader = document.getElementById('loader');
+    loader.style.display = 'block';
 
-        // Fetch the search results from the server
-        const response = await fetch(`/services/search?query=${encodeURIComponent(query)}`);
-        const results = await response.json();
+    // Fetch the search results from the server
+    const response = await fetch(`/services/search?query=${encodeURIComponent(query)}`);
+    const results = await response.json();
 
-        // Hide loader
-        loader.style.display = 'none';
+    // Hide loader
+    loader.style.display = 'none';
 
-        // Populate search results
-        const resultsContainer = document.getElementById('search-results');
-        resultsContainer.innerHTML = ''; // Clear previous results
+    // Populate search results
+    const resultsContainer = document.getElementById('search-results');
+    resultsContainer.innerHTML = ''; // Clear previous results
 
-        if (results.length > 0) {
-            results.forEach(service => {
-                const serviceElement = document.createElement('div');
-                serviceElement.className = 'result-card'; // Add class for styling
-                serviceElement.innerHTML = `
+    if (results.length > 0) {
+        results.forEach(service => {
+            const serviceElement = document.createElement('div');
+            serviceElement.className = 'result-card'; // Add class for styling
+            serviceElement.innerHTML = `
+                <div class="service-header">
                     <h3>${service.name}</h3>
-                    <p>${service.description}</p>
-                    <p class="location">Location: ${service.location}</p>
-                    <p class="price">Price: ${service.priceRange}</p>
-                    <p class="rating">Rating: ${service.rating}</p>
-                `;
-                resultsContainer.appendChild(serviceElement);
-            });
-        } else {
-            resultsContainer.innerHTML = '<p>No services found</p>';
-        }
-    });
-
-
-
+                    <span class="rating">⭐ ${service.rating}</span>
+                </div>
+                <p class="description">${service.description}</p>
+                <div class="service-footer">
+                    <p class="location">📍 ${service.location}</p>
+                    <p class="price">💵 ${service.priceRange}</p>
+                </div>
+            `;
+            resultsContainer.appendChild(serviceElement);
+        });
+    } else {
+        resultsContainer.innerHTML = '<p>No services found</p>';
+    }
+});
 
     </script>
 </body>

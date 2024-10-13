@@ -12,32 +12,7 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* Header */
-header {
-    background-color: #007bff;
-    color: #fff;
-    padding: 1rem 0;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    animation: slideIn 1s ease-out;
-}
 
-header .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-header h1 {
-    margin: 0;
-    font-size: 2rem;
-    transition: font-size 0.3s, text-shadow 0.3s ease-in-out;
-    font-size: 2rem;
-}
 
 /* Keyframes for colorShift animation in light mode */
 @keyframes colorShiftLight {
@@ -77,82 +52,7 @@ body.dark-mode header h1 {
 
 /* Other CSS as before */
 
-/* Navigation Styles */
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 1.5rem;
-}
 
-nav a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s, transform 0.3s;
-}
-
-nav a:hover {
-    color: #ffd700;
-    transform: scale(1.1);
-}
-
-/* Advanced Navigation Animation */
-nav ul li {
-    position: relative;
-}
-
-nav ul li a {
-    overflow: hidden;
-    display: inline-block;
-    position: relative;
-    z-index: 1;
-}
-
-nav ul li a::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    height: 2px;
-    width: 100%;
-    background: #ffd700;
-    transform: translateX(-100%);
-    transition: transform 0.4s ease;
-}
-
-nav ul li a:hover::after {
-    transform: translateX(0);
-}
-
-.toggle-container {
-    display: flex;
-    align-items: center;
-}
-
-/* Active link styles */
-nav ul li a.active {
-    color: #ffd700; /* Highlight color for the active link */
-    font-weight: bold;
-    transform: scale(1.1); /* Optional: scale effect */
-}
-
-nav ul li a.active::after {
-    transform: translateX(0); /* Show the underline for the active link */
-}
-
-#theme-toggle {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: color 0.3s, transform 0.3s, background-color 0.3s;
-}
-
-#theme-toggle:hover {
-    color: #ffd700;
-    transform: rotate(360deg);
-}
 
 /* Hero Section */
 #hero {
@@ -317,14 +217,6 @@ nav ul li a.active::after {
     transform: rotateY(180deg);
 }
 
-/* Footer */
-footer {
-    background-color: #007bff;
-    color: #fff;
-    padding: 1rem 0;
-    text-align: center;
-}
-
 /* Animations */
 @keyframes slideIn {
     from {
@@ -344,43 +236,8 @@ footer {
     }
 }
 
-/* Dark Mode */
-body.dark-mode {
-    background-color: #333;
-    color: #f5f5f5;
-}
 
-body.dark-mode header {
-    background-color: #1a1a1a;
-}
 
-body.dark-mode nav a {
-    color: #f5f5f5;
-}
-
-body.dark-mode .hero-content h2, body.dark-mode .hero-content p {
-    color: #f5f5f5;
-}
-
-body.dark-mode .hero-btns input {
-    border-color: #1a1a1a;
-}
-
-body.dark-mode .hero-btns button {
-    background-color: #1a1a1a;
-}
-
-body.dark-mode .service-card {
-    background-color: #333;
-}
-
-body.dark-mode .card-back {
-    background-color: #1a1a1a;
-}
-
-body.dark-mode footer {
-    background-color: #1a1a1a;
-}
 @media (max-width: 768px) {
     .hero-btns {
         flex-direction: column;
@@ -401,51 +258,74 @@ body.dark-mode footer {
         max-width: 300px;
     }
 }
-
 /* Container for search results */
-.results-container {
+#search-results {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
     margin: 20px auto;
     width: 80%;
-    max-width: 1200px;
-    border: 2px solid #3333; /* Change this to your desired color */
-    border-radius: 10px; /* Optional: adds rounded corners */
-    padding: 10px;
 }
 
 /* Individual result card */
-.results-container .result-card {
-    flex: 1 1 calc(33% - 40px); /* Adjust to fit 3 cards per row with gaps */
+.result-card {
+    flex: 1 1 calc(33% - 40px);
     background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.results-container .result-card:hover {
+.result-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Card Content */
-.result-card h3 {
+/* Service Header */
+.service-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.service-header h3 {
     margin: 0;
+    font-size: 1.25rem;
     color: #2c3e50;
 }
 
-.result-card p {
-    margin: 10px 0;
-    color: #7f8c8d;
+.service-header .rating {
+    background-color: #f39c12;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9rem;
 }
 
-.result-card .location, .result-card .price, .result-card .rating {
-    font-weight: bold;
+/* Service description */
+.description {
+    margin-bottom: 15px;
+    color: #7f8c8d;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Footer for location and price */
+.service-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
     color: #3498db;
+}
+
+.service-footer .location,
+.service-footer .price {
+    font-weight: bold;
 }
 
 /* Loader styling */
