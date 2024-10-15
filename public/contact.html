@@ -2,50 +2,58 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/CSS/contact.css">
-  <link rel="stylesheet" href="/CSS/darkmode.css">
-  <title>Contact Us</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/CSS/contact.css">
+    <link rel="stylesheet" href="/CSS/darkmode.css">
+    <title>Contact Us</title>
 </head>
 
 <body>
-  <div id="header"></div> <!-- Placeholder for Header -->
+    <div id="header"></div> <!-- Placeholder for Header -->
 
-  <main>
-    <section class="contact-section">
-      <div class="container">
-        <h1 class="section-title">Get in Touch</h1>
-        <p class="section-description">We'd love to hear from you! Please fill out the form below or reach out to us via email or phone.</p>
-        
-        <form class="contact-form" id="contactForm">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required>
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-          </div>
-          <div class="form-group">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" rows="5" required></textarea>
-          </div>
-          <button type="submit" class="submit-button">Send Message</button>
-        </form>
+    <main>
+        <section class="contact-section">
+            <div class="container">
+                <h1 class="section-title">We'd Love to Hear From You!</h1>
+                <div class="contact-content">
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Your Email</label>
+                            <input type="email" id="email" name="email" placeholder="example@mail.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Your Message</label>
+                            <textarea id="message" name="message" rows="5" placeholder="Type your message here..." required></textarea>
+                        </div>
+                        <button type="submit" class="submit-button">Send Message</button>
+                    </form>
 
-        <div class="contact-info">
-          <h2>Contact Information</h2>
-          <p>Email: support@localservices.com</p>
-          <p>Phone: (123) 456-7890</p>
-        </div>
-      </div>
-    </section>
-  </main>
+                    <div class="contact-info">
+                        <h2>Contact Information</h2>
+                        <p>Email: support@localservices.com</p>
+                        <p>Phone: (123) 456-7890</p>
+                        <p>Address: Plot No. 1, 2, Sion - Panvel Expressway, Sector 18, Kamothe, Navi Mumbai, Maharashtra 410209</p>
+                    </div>
+                </div>
 
-  <div id="footer"></div> <!-- Placeholder for Footer -->
-  <script src="/JS/script.js"></script>
-  <script src="theme-toggle.js"></script>
+                <div class="map-container">
+                    <h2>Find Us Here</h2>
+                    <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.548297091575!2d73.05982351514111!3d19.07332158702108!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c7726e2b163b%3A0x72e0b1935f8e59!2sPlot%20No.%201%2C%202%2C%20Sion%20-%20Panvel%20Expressway%2C%20Sector%2018%2C%20Kamothe%2C%20Navi%20Mumbai%2C%20Maharashtra%20410209!5e0!3m2!1sen!2sin!4v1697902112975!5m2!1sen!2sin"
+                        width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer"></div> <!-- Placeholder for Footer -->
+    <script src="/JS/script.js"></script>
+    <script src="theme-toggle.js"></script>
 </body>
 
 </html>

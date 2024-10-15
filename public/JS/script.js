@@ -42,8 +42,13 @@ function setupThemeToggle() {
     });
 }
 
-// Call the function when the window loads
-window.onload = loadHeaderFooter;
+// Ensure the dark mode toggle works for bookings page as well
+window.onload = function() {
+    loadHeaderFooter();
+    fetchBookings(); // Load bookings for the current user
+    setupThemeToggle(); // Initialize dark mode
+};
+
 
 // Navigation highlighting script
 document.addEventListener('DOMContentLoaded', function () {

@@ -4,12 +4,14 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 const path = require('path');
 const bcrypt = require('bcrypt');  // To securely store and check passwords
-
+const nodemailer = require('nodemailer');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const port = 8000;
 
 // Middleware
+app.use(express.json());  // Add this line to parse JSON request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -36,6 +38,15 @@ async function connectToMongoDB() {
 }
 // Call the function to connect to MongoDB
 connectToMongoDB();
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // You can use other services like Yahoo, Outlook, etc.
+    auth: {
+        user: 'ankuryadav89666@gmail.com',  // Your email address
+        pass: 'yzvg kiaj cool vgze'    // Your email password or app-specific password
+    }
+});
+
 
 // Serve the login page as the home page
 app.get('/', (req, res) => {
@@ -128,6 +139,7 @@ app.post('/signup', async (req, res) => {
 });
 
 // Login Route
+// Login Route
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -152,24 +164,27 @@ app.post('/login', async (req, res) => {
             return res.redirect('/home');
         }
 
-        // Redirect customers to home page
-        res.redirect('/home');
+        // Store email in localStorage and redirect based on role and submission status
+        res.send(`
+            <script>
+                localStorage.setItem('userEmail', '${user.email}');
+                window.location.href = '/home';
+            </script>
+        `);
     } catch (err) {
         console.error('Error occurred during login:', err);
         res.status(500).send('Error occurred during login');
     }
 });
 
+
 // Service Submission Route
 app.post('/submit-service', async (req, res) => {
-    const { name, category, location, priceRange, description, email } = req.body; // Ensure email is captured here
-    console.log("Submission Data:", req.body); // Log the entire request body for debugging
+    const { name, category, location, priceRange, description, email } = req.body;
 
     try {
         // Find the user by email
         const user = await db.collection('users').findOne({ email });
-        console.log("Found User:", user); // Log the found user for debugging
-
         if (!user) {
             return res.status(400).send('User not found');
         }
@@ -191,6 +206,35 @@ app.post('/submit-service', async (req, res) => {
             { email },
             { $set: { hasSubmittedService: true } }
         );
+
+        // Send an email to the service provider with the form details
+        const mailOptions = {
+            from: 'ankuryadav89666@gmail.com',
+            to: email,  // The service provider's email address
+            subject: 'Service Form Submission Confirmation',
+            text: `
+                Hi ${user.username},
+
+                Thank you for submitting your service information. Here are the details you entered:
+
+                - Service Name: ${name}
+                - Category: ${category}
+                - Location: ${location}
+                - Price Range: ${priceRange}
+                - Description: ${description}
+
+                Best regards,
+                Local Services Marketplace
+            `
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log('Error sending email:', error);
+                return res.status(500).send('Failed to send confirmation email');
+            }
+            console.log('Email sent: ' + info.response);
+        });
 
         // Redirect to home page after submission
         res.redirect('/home');
@@ -252,4 +296,214 @@ app.get('/services/search', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+// Serve the booking page
+app.get('/booking', async (req, res) => {
+    const { serviceId } = req.query;
+    console.log('Received serviceId:', serviceId);
+    
+    try {
+        // Check if the serviceId is a valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(serviceId)) {
+            return res.status(400).send('Invalid service ID');
+        }
+        
+        // Find the service by ID
+        const service = await db.collection('services').findOne({ _id: new mongoose.Types.ObjectId(serviceId) });
+        if (!service) {
+            return res.status(404).send('Service not found');
+        }
+        
+        // Serve the booking page
+        res.sendFile(path.join(__dirname, 'public', 'booking.html'));
+    } catch (err) {
+        console.error('Error loading booking page:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+
+// Fetch a service by ID
+app.get('/services/:serviceId', async (req, res) => {
+    const { serviceId } = req.params;
+    
+    try {
+        const service = await db.collection('services').findOne({ _id: new mongoose.Types.ObjectId(serviceId) });
+        if (!service) {
+            return res.status(404).send('Service not found');
+        }
+        res.json(service);
+    } catch (err) {
+        console.error('Error fetching service:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+app.post('/submit-booking', async (req, res) => {
+    const { serviceId, date, time, notes, email } = req.body;
+    console.log('Received email:', email);
+
+    // Log incoming data for debugging
+    console.log('Booking data:', { serviceId, date, time, notes, email });
+
+    const bookingId = uuidv4();
+
+    // Check if email is provided
+    if (!email) {
+        return res.status(400).send('Customer email is required to send a confirmation.');
+    }
+
+    // Check if serviceId is valid
+    if (!mongoose.Types.ObjectId.isValid(serviceId)) {
+        return res.status(400).send('Invalid service ID');
+    }
+
+    try {
+        // Fetch the service by ID
+        const service = await db.collection('services').findOne({ _id: new mongoose.Types.ObjectId(serviceId) });
+        if (!service) {
+            return res.status(404).send('Service not found');
+        }
+
+        // Extract service details
+        const serviceName = service.category;  // Assuming 'category' is the service name
+
+        // Insert booking into bookings collection
+        const booking = {
+            bookingId,  // Storing generated bookingId
+            serviceId: new mongoose.Types.ObjectId(serviceId),
+            date,
+            time,
+            notes,
+            email,
+            status: 'pending', // Initialize status as pending
+            createdAt: new Date(),
+        };
+        
+        console.log('Booking object to be inserted:', booking);
+        await db.collection('bookings').insertOne(booking);
+
+        // Set up email options
+        const mailOptions = {
+            from: 'ankuryadav89666@gmail.com',
+            to: email,  // Customer's email
+            subject: 'Booking Confirmation',
+            text: `Dear customer,
+
+            Your booking has been confirmed for the following service:
+            - Service: ${serviceName}
+            - Date: ${date}
+            - Time: ${time}
+
+            Thank you for using our platform!
+
+            Best regards,
+            Local Services Marketplace`
+        };
+
+        // Send the email
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log('Error sending email:', error);
+                return res.status(500).send('Failed to send booking confirmation email');
+            }
+
+            console.log('Email sent: ' + info.response);
+
+            // Send response to the client
+            res.send('Booking successful! A confirmation email has been sent.');
+        });
+
+    } catch (err) {
+        console.error('Error occurred during booking:', err);
+        res.status(500).send('Error occurred while processing the booking.');
+    }
+});
+
+// Serve My Bookings page
+app.get('/my-bookings', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'my-bookings.html'));
+});
+
+app.get('/bookings', async (req, res) => {
+    const { email } = req.query;
+
+    try {
+        const bookings = await db.collection('bookings').find({ email }).toArray();
+
+        if (bookings.length === 0) {
+            return res.status(404).send('No bookings found for this user');
+        }
+
+        const bookingsWithServiceNames = await Promise.all(bookings.map(async (booking) => {
+            const service = await db.collection('services').findOne({ _id: new mongoose.Types.ObjectId(booking.serviceId) });
+            return {
+                ...booking,
+                serviceName: service ? service.category : 'Service not found',
+            };
+        }));
+
+        res.json(bookingsWithServiceNames);
+    } catch (err) {
+        console.error('Error fetching bookings:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+// Cancel a booking
+app.post('/cancel-booking', async (req, res) => {
+    const { bookingId, email } = req.body;
+    
+    // Debugging logs
+    console.log('Received bookingId:', bookingId); // Check bookingId is received correctly
+    console.log('Received email:', email);         // Check email is received correctly
+
+    if (!bookingId || !email) {
+        return res.status(400).send('Booking ID and email are required');
+    }
+
+    try {
+        // Update booking status to 'cancelled'
+        const result = await db.collection('bookings').updateOne(
+            { bookingId: bookingId, email: email },
+            { $set: { status: 'cancelled' } }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).send('Booking not found or invalid email');
+        }
+
+        res.send('Booking cancelled successfully');
+    } catch (err) {
+        console.error('Error cancelling booking:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+
+
+// Mark booking as completed
+app.post('/complete-booking', async (req, res) => {
+    const { bookingId, email } = req.body;
+
+    try {
+        const result = await db.collection('bookings').updateOne(
+            { _id: new mongoose.Types.ObjectId(bookingId), email: email },
+            { $set: { status: 'completed' } }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).send('Booking not found or invalid email');
+        }
+
+        res.send('Booking marked as completed');
+    } catch (err) {
+        console.error('Error completing booking:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+
+
+
 

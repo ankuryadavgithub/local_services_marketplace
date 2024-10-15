@@ -1,0 +1,155 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Heading */
+h1 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 30px;
+    /* color: #007bff; */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Table Wrapper */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: linear-gradient(135deg, #ffffff 50%, #eaeaea 50%);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+/* Header Styling */
+thead {
+    background: linear-gradient(135deg, #007bff, #00bfff);
+    color: white;
+    text-align: left;
+}
+
+thead th {
+    padding: 15px;
+    font-weight: bold;
+    font-size: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* Body Styling */
+tbody {
+    transition: background 0.3s ease;
+}
+
+tbody tr {
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+tbody td {
+    padding: 20px;
+    border-bottom: 1px solid #eaeaea;
+    font-size: 16px;
+    color: #333;
+    transition: background 0.3s ease;
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.5);
+    transform: translateY(-5px);
+}
+
+/* Row Divider (Alternate Color) */
+tbody tr:nth-child(even) {
+    background-color: rgba(245, 245, 245, 0.8);
+}
+
+/* Gradient Animation on Table */
+.table-wrapper:hover table {
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+}
+
+/* No Bookings Message */
+#bookings-table tbody:empty::before {
+    content: "No bookings available.";
+    display: block;
+    padding: 20px;
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    tbody td {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    thead th {
+        padding: 15px;
+        font-size: 14px;
+    }
+}
+
+/* Responsive Scrollbar */
+.table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: rgba(240, 240, 240, 0.8);
+    border-radius: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 8px;
+}
+
+/* Cancel Button Styling */
+button {
+    padding: 10px 20px;
+    background-color: #ff4d4d; /* Red color for cancellation */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #e60000; /* Darker red on hover */
+    transform: translateY(-3px); /* Slight lift on hover */
+}
+
+button:active {
+    background-color: #cc0000; /* Even darker red on active */
+    transform: translateY(0); /* Reset lift on click */
+}
+

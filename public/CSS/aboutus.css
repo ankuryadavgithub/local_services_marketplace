@@ -82,3 +82,59 @@ body {
       padding: 10px;
   }
 }
+
+/* Dark Mode for About Page */
+body.dark-mode {
+  background-color: #1a1a1a; /* Darker background for dark mode */
+  color: #f5f5f5; /* Light text color for better contrast */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition between modes */
+}
+
+body.dark-mode .responsive-container-block.bigContainer {
+  background-color: #2a2a2a; /* Darker background for containers */
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 4px 8px; /* Softer shadow in dark mode */
+}
+
+body.dark-mode .Container {
+  background-color: #333; /* Darker background for content sections */
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 4px 8px; /* Adjust shadow for dark mode */
+}
+
+body.dark-mode .headingText {
+  color: #00aaff; /* Light blue color for headings in dark mode */
+}
+
+body.dark-mode .description {
+  color: #cccccc; /* Light gray for readable paragraph text */
+}
+
+/* Image Styling in Dark Mode */
+body.dark-mode .mainImg {
+  filter: brightness(0.8); /* Slightly darken images for dark mode */
+}
+
+/* Responsive Adjustments for Dark Mode */
+@media (max-width: 768px) {
+  body.dark-mode .headingText {
+      font-size: 24px;
+  }
+
+  body.dark-mode .description {
+      font-size: 16px;
+  }
+}
+
+@media (max-width: 500px) {
+  body.dark-mode .headingText {
+      font-size: 20px;
+  }
+
+  body.dark-mode .description {
+      font-size: 14px;
+  }
+
+  body.dark-mode .responsive-container-block {
+      padding: 10px;
+  }
+}
+

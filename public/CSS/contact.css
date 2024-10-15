@@ -7,9 +7,8 @@
 }
 
 body {
-    background-color: #f4f4f4;
+    background-color: #f9f9f9;
     color: #333;
-    transition: background-color 0.3s, color 0.3s;
 }
 
 .contact-section {
@@ -17,7 +16,7 @@ body {
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    max-width: 1000px;
     margin: 40px auto;
 }
 
@@ -34,17 +33,14 @@ body {
     text-align: center;
 }
 
-.section-description {
-    font-size: 18px;
-    margin-bottom: 40px;
-    text-align: center;
-    color: #555;
+.contact-content {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
 }
 
 .contact-form {
     width: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
 .form-group {
@@ -66,6 +62,7 @@ textarea {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    transition: border-color 0.3s;
 }
 
 input[type="text"]:focus,
@@ -95,7 +92,6 @@ textarea {
 }
 
 .contact-info {
-    margin-top: 40px;
     text-align: center;
 }
 
@@ -110,14 +106,26 @@ textarea {
     margin: 5px 0;
 }
 
+/* Map Container */
+.map-container {
+    margin-top: 40px;
+    width: 100%;
+}
+
+.map-container h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
     .section-title {
         font-size: 28px;
     }
 
-    .section-description {
-        font-size: 16px;
+    .contact-info h2 {
+        font-size: 22px;
     }
 
     .submit-button {

@@ -10,21 +10,29 @@
     <div class="form-container">
         <h2>Submit Your Service</h2>
         <form action="/submit-service" method="post">
-            <input type="email" name="email" placeholder="Your Email" required>
+            <!-- Email field to capture service provider's email -->
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+
             <label for="name">Name of Service:</label>
             <input type="text" name="name" required>
+
             <label for="category">Category:</label>
             <input type="text" name="category" required>
+
             <label for="location">Location:</label>
             <input type="text" name="location" required>
+
             <label for="priceRange">Price Range:</label>
             <select name="priceRange" required>
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
             </select>
+
             <label for="description">Description:</label>
             <textarea name="description" required></textarea>
+
             <button type="submit">Submit</button>
         </form>
     </div>

@@ -106,22 +106,30 @@
     });
     
     function renderServices(services) {
-        const container = document.getElementById('services-container');
-        container.innerHTML = ''; // Clear previous results
-        services.forEach(service => {
-            const serviceCard = `
-                <div class="service-card">
-                    <h3>${service.name}</h3>
-                    <p>${service.description}</p>
-                    <div class="service-info">
-                        <span>${'★'.repeat(service.rating)}</span>
-                        <span>${service.priceRange}</span>
-                        <span>${service.location}</span>
-                    </div>
+    const container = document.getElementById('services-container');
+    container.innerHTML = ''; // Clear previous results
+
+    services.forEach(service => {
+        const serviceCard = `
+            <div class="service-card">
+                <h3>${service.name}</h3>
+                <p>${service.description}</p>
+                <div class="service-info">
+                    <span>${'★'.repeat(service.rating)}</span>
+                    <span>${service.priceRange}</span>
+                    <span>${service.location}</span>
                 </div>
-            `;
-            container.innerHTML += serviceCard;
-        });
-    }
+                <button onclick="bookService('${service._id}')">Book Now</button>
+            </div>
+        `;
+        container.innerHTML += serviceCard;
+    });
+}
+
+function bookService(serviceId) {
+    console.log('Service ID being passed:', serviceId);  // Should log the correct ObjectId
+    window.location.href = `/booking?serviceId=${serviceId}`;
+}
+
     </script>
     

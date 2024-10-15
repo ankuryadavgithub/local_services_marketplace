@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Booking</title>
+    <link rel="stylesheet" href="/CSS/booking.css">
+    <link rel="stylesheet" href="/CSS/darkmode.css">
+</head>
+<body>
+
+    <div id="header"></div> <!-- Placeholder for Header -->
+
+    <main>
+        <!-- <h1>Book Service</h1> -->
+        <form action="/submit-booking" method="POST">
+            <input type="hidden" name="serviceId" value="<%= serviceId %>">
+            <input type="hidden" name="email" value="">
+         
+            <label for="date">Select Date:</label>
+            <input type="date" id="date" name="date" required><br><br>
+
+            <label for="time">Select Time:</label>
+            <input type="time" id="time" name="time" required><br><br>
+
+            <label for="notes">Additional Notes:</label>
+            <textarea id="notes" name="notes" placeholder="Enter any special requests or instructions..."></textarea><br><br>
+
+            <button type="submit">Confirm Booking</button>
+        </form>
+    </main>
+
+    <div id="footer"></div> <!-- Placeholder for Footer -->
+
+    <script>
+        // Load header and footer
+        document.getElementById('header').innerHTML = fetch('/header.html').then(response => response.text()).then(text => document.getElementById('header').innerHTML = text);
+        document.getElementById('footer').innerHTML = fetch('/footer.html').then(response => response.text()).then(text => document.getElementById('footer').innerHTML = text);
+        document.addEventListener('DOMContentLoaded', function() {
+    flatpickr("#date", {
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        minDate: "today",  // Prevent past dates from being selected
+    });
+
+    flatpickr("#time", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true,  // Show 24hr time format
+    });
+});
+
+        // Retrieve the email stored in localStorage
+        const userEmail = localStorage.getItem('userEmail');
+        if (userEmail) {
+            document.querySelector('input[name="email"]').value = userEmail;
+        } else {
+            console.error('No user email found in localStorage');
+        }
+
+        // Retrieve the serviceId from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceId = urlParams.get('serviceId');
+        if (serviceId) {
+            document.querySelector('input[name="serviceId"]').value = serviceId;
+        } else {
+            console.error('No serviceId found in the URL');
+        }
+    </script>
+</body>
+</html>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="/JS/script.js"></script>

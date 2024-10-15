@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings</title>
+    <link rel="stylesheet" href="CSS/my-bookings.css"> <!-- Add your styles -->
+    <link rel="stylesheet" href="CSS/darkmode.css">
+</head>
+<div id="header"></div> <!-- Placeholder for Header -->
+<body class="my-bookings">
+    <div class="container">
+        <h1>My Bookings</h1>
+        <table id="bookings-table">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Scheduled on</th>
+                    <th>Time</th>
+                    <th>Notes</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                    <th>Cancel</th>
+
+                </tr>
+            </thead>
+            <tbody class="bookingsInsertion">
+                <!-- Bookings will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="footer"></div> <!-- Placeholder for Footer -->
+
+    <script>
+        document.getElementById('header').innerHTML = fetch('/header.html').then(response => response.text()).then(text => document.getElementById('header').innerHTML = text);
+        document.getElementById('footer').innerHTML = fetch('/footer.html').then(response => response.text()).then(text => document.getElementById('footer').innerHTML = text);
+        // Fetch bookings from the server
+       // Fetch bookings from the server
+            // Fetch bookings from the server
+        async function fetchBookings() {
+            const email = localStorage.getItem('userEmail');
+            const response = await fetch(`/bookings?email=${email}`);
+            const bookings = await response.json();
+            const tbody = document.getElementById('bookings-table').getElementsByTagName('tbody')[0];
+
+            bookings.forEach(booking => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${booking.serviceName}</td>
+                    <td>${booking.date}</td>
+                    <td>${booking.time}</td>
+                    <td>${booking.notes}</td>
+                    <td>${new Date(booking.createdAt).toLocaleString()}</td>
+                    <td>${booking.status}</td>
+                    <td>
+                        ${booking.status === 'pending' ? `<button onclick="cancelBooking('${booking.bookingId}')">Cancel</button>` : ''}
+                        </td>
+                    
+                `;
+            });
+        }
+
+        // Call the function on page load
+        window.onload = fetchBookings;
+
+        async function cancelBooking(bookingId) {
+            const email = localStorage.getItem('userEmail');
+
+            // Debugging log
+            console.log('Cancelling booking with ID:', bookingId);
+            console.log('User email:', email);
+
+            const response = await fetch('/cancel-booking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ bookingId, email }),
+            });
+
+            if (response.ok) {
+                alert('Booking cancelled successfully');
+                window.location.reload();
+            } else {
+                const errorText = await response.text();
+                alert(`Failed to cancel booking: ${errorText}`); // Display server error message
+            }
+        }
+        
+    </script>
+</body>
+
+</html>
+<script src="/JS/script.js"></script>
