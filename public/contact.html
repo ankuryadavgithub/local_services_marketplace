@@ -31,7 +31,7 @@
                             <textarea id="message" name="message" rows="5" placeholder="Type your message here..." required></textarea>
                         </div>
                         <button type="submit" class="submit-button">Send Message</button>
-                    </form>
+                    </form>                    
 
                     <div class="contact-info">
                         <h2>Contact Information</h2>
@@ -52,6 +52,37 @@
     </main>
 
     <div id="footer"></div> <!-- Placeholder for Footer -->
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', async function (e) {
+    e.preventDefault();  // Prevent default form submission
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+
+    try {
+        const response = await fetch('/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, email, message })
+        });
+
+        const result = await response.text();
+        
+        if (response.ok) {
+            alert(result);  // Show success message
+        } else {
+            alert('Error: ' + result);  // Show error message
+        }
+    } catch (error) {
+        console.error('Error submitting contact form:', error);
+        alert('An error occurred while sending your message. Please try again.');
+    }
+});
+
+    </script>
     <script src="/JS/script.js"></script>
     <script src="theme-toggle.js"></script>
 </body>

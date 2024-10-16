@@ -109,7 +109,7 @@ app.post('/signup', async (req, res) => {
 
         // Hash the password before saving it
         const hashedPassword = await bcrypt.hash(password, 10);
-        console.log(`Hashed Password: ${hashedPassword}`);  // Debugging log
+        console.log(`Hashed Password: ${hashedPassword}`); 
 
         // Create the user object
         const user = {
@@ -138,7 +138,6 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-// Login Route
 // Login Route
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -177,6 +176,46 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// Server-side route to handle contact form submission
+app.post('/contact', async (req, res) => {
+    const { name, email, message } = req.body;
+
+    // Basic validation (you can add more validation logic)
+    if (!name || !email || !message) {
+        return res.status(400).send('All fields are required.');
+    }
+
+    try {
+        // 1. Send acknowledgment email to the user
+        const userMailOptions = {
+            from: 'ankuryadav89666@gmail.com',  // Your platform's email
+            to: email,  // The user's email
+            subject: 'Contact Form Submission Confirmation',
+            text: `Hello ${name},\n\nThank you for reaching out to us. We have received your message:\n"${message}"\n\nWe will get back to you shortly!\n\nBest regards,\nLocal Services Team`
+        };
+
+        // Send acknowledgment email
+        await transporter.sendMail(userMailOptions);
+
+        // 2. Forward the user's message to the support team
+        const supportMailOptions = {
+            from: email,
+            to: 'ankuryadav89666@gmail.com.com',  // Support team email
+            subject: `New Contact Form Message from ${name}`,
+            text: `You have received a new message from ${name} (${email}):\n\n"${message}"`
+        };
+
+        // Send the message to the support team
+        await transporter.sendMail(supportMailOptions);
+
+        // Send a response back to the frontend (for AJAX success handling)
+        res.status(200).send('Your message has been sent successfully!');
+    } catch (error) {
+        console.error('Error handling contact form submission:', error);
+        res.status(500).send('Server error. Please try again later.');
+    }
+});
+
 
 // Service Submission Route
 app.post('/submit-service', async (req, res) => {
@@ -189,7 +228,7 @@ app.post('/submit-service', async (req, res) => {
             return res.status(400).send('User not found');
         }
 
-        // Insert the service into the services collection
+        // Insert the service into the services collection, including the service provider's email
         const service = {
             name,
             category,
@@ -197,6 +236,7 @@ app.post('/submit-service', async (req, res) => {
             priceRange,
             description,
             rating: 0, // Initialize rating
+            serviceProviderEmail: email, // Add the service provider's email
         };
 
         await db.collection('services').insertOne(service);
@@ -365,17 +405,19 @@ app.post('/submit-booking', async (req, res) => {
             return res.status(404).send('Service not found');
         }
 
-        // Extract service details
+        // Extract service details including service provider's email
         const serviceName = service.category;  // Assuming 'category' is the service name
+        const serviceProviderEmail = service.serviceProviderEmail;  // Get service provider's email
 
-        // Insert booking into bookings collection
+        // Insert booking into bookings collection with service provider email
         const booking = {
             bookingId,  // Storing generated bookingId
             serviceId: new mongoose.Types.ObjectId(serviceId),
             date,
             time,
             notes,
-            email,
+            email,  // Customer's email
+            serviceProviderEmail,  // Add service provider's email to the booking
             status: 'pending', // Initialize status as pending
             createdAt: new Date(),
         };
@@ -383,7 +425,7 @@ app.post('/submit-booking', async (req, res) => {
         console.log('Booking object to be inserted:', booking);
         await db.collection('bookings').insertOne(booking);
 
-        // Set up email options
+        // Set up email options for customer confirmation
         const mailOptions = {
             from: 'ankuryadav89666@gmail.com',
             to: email,  // Customer's email
@@ -401,7 +443,7 @@ app.post('/submit-booking', async (req, res) => {
             Local Services Marketplace`
         };
 
-        // Send the email
+        // Send the confirmation email to the customer
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.log('Error sending email:', error);
@@ -453,10 +495,10 @@ app.get('/bookings', async (req, res) => {
 // Cancel a booking
 app.post('/cancel-booking', async (req, res) => {
     const { bookingId, email } = req.body;
-    
+
     // Debugging logs
-    console.log('Received bookingId:', bookingId); // Check bookingId is received correctly
-    console.log('Received email:', email);         // Check email is received correctly
+    console.log('Received bookingId:', bookingId);
+    console.log('Received email:', email);
 
     if (!bookingId || !email) {
         return res.status(400).send('Booking ID and email are required');
@@ -464,22 +506,56 @@ app.post('/cancel-booking', async (req, res) => {
 
     try {
         // Update booking status to 'cancelled'
-        const result = await db.collection('bookings').updateOne(
+        const bookingResult = await db.collection('bookings').updateOne(
             { bookingId: bookingId, email: email },
             { $set: { status: 'cancelled' } }
         );
 
-        if (result.matchedCount === 0) {
+        if (bookingResult.matchedCount === 0) {
             return res.status(404).send('Booking not found or invalid email');
         }
 
-        res.send('Booking cancelled successfully');
+        // Fetch booking details to retrieve service provider's email
+        const booking = await db.collection('bookings').findOne({ bookingId: bookingId });
+
+        if (!booking) {
+            return res.status(404).send('Booking not found');
+        }
+
+        const serviceProviderEmail = booking.serviceProviderEmail;
+
+        if (!serviceProviderEmail) {
+            return res.status(404).send('Service provider email not found');
+        }
+
+        // Send email to the service provider about cancellation
+        const mailOptions = {
+            from: 'ankuryadav89666@gmail.com', // Replace with your email
+            to: serviceProviderEmail,    // Send email to the service provider
+            subject: 'Service Booking Cancelled',
+            text: `Dear Service Provider,
+
+            A booking for your service scheduled on ${booking.date} has been cancelled by the user.
+
+            Best regards,
+            Local Services Marketplace`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                return res.status(500).send('Error sending email');
+            }
+            console.log('Email sent:', info.response);
+        });
+
+        // Send response back to the user
+        res.send('Booking cancelled successfully and notification sent to the service provider');
     } catch (err) {
         console.error('Error cancelling booking:', err);
         res.status(500).send('Server error');
     }
 });
-
 
 
 // Mark booking as completed
