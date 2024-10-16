@@ -1,11 +1,12 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 const path = require('path');
 const bcrypt = require('bcrypt');  // To securely store and check passwords
 const nodemailer = require('nodemailer');
 const { v4: uuidv4 } = require('uuid');
+const { MongoClient, ObjectId } = require('mongodb');
+
 
 const app = express();
 const port = 8000;
@@ -109,21 +110,23 @@ app.post('/signup', async (req, res) => {
 
         // Hash the password before saving it
         const hashedPassword = await bcrypt.hash(password, 10);
-        console.log(`Hashed Password: ${hashedPassword}`); 
+        console.log(`Hashed Password: ${hashedPassword}`);
 
-        // Create the user object
+        // Create the user object with role-specific fields
         const user = {
             username,
             email,
             password: hashedPassword,
             role,
-            hasSubmittedService: role === 'service_provider' ? false : undefined, 
+            hasSubmittedService: role === 'service_provider' ? false : undefined,
             address: role === 'customer' ? address : undefined,
             phone: role === 'customer' ? phone : undefined,
             country: role === 'service_provider' ? country : undefined,
             location: role === 'service_provider' ? location : undefined,
             service_type: role === 'service_provider' ? service_type : undefined,
             experience: role === 'service_provider' ? experience : undefined,
+            // Admin role specific fields
+            permissions: role === 'admin' ? ['manage_users', 'view_reports', 'edit_settings'] : undefined,
         };
 
         // Insert the new user
@@ -153,7 +156,7 @@ app.post('/login', async (req, res) => {
             return res.status(400).send('Invalid password');
         }
 
-        // Redirect based on role and submission status
+        // Redirect based on role
         if (user.role === 'service_provider') {
             if (!user.hasSubmittedService) {
                 // Redirect to service form if not submitted
@@ -161,9 +164,12 @@ app.post('/login', async (req, res) => {
             }
             // Redirect to home page if already submitted
             return res.redirect('/home');
+        } else if (user.role === 'admin') {
+            // Redirect admin to admin dashboard or a relevant page
+            return res.redirect('/admin-dashboard');
         }
 
-        // Store email in localStorage and redirect based on role and submission status
+        // Store email in localStorage and redirect for other roles
         res.send(`
             <script>
                 localStorage.setItem('userEmail', '${user.email}');
@@ -176,46 +182,123 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Server-side route to handle contact form submission
-app.post('/contact', async (req, res) => {
-    const { name, email, message } = req.body;
+ // Get the admin dashboard
+ app.get('/admin-dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
+});
 
-    // Basic validation (you can add more validation logic)
-    if (!name || !email || !message) {
-        return res.status(400).send('All fields are required.');
-    }
-
+// Get all users
+app.get('/admin/users', async (req, res) => {
     try {
-        // 1. Send acknowledgment email to the user
-        const userMailOptions = {
-            from: 'ankuryadav89666@gmail.com',  // Your platform's email
-            to: email,  // The user's email
-            subject: 'Contact Form Submission Confirmation',
-            text: `Hello ${name},\n\nThank you for reaching out to us. We have received your message:\n"${message}"\n\nWe will get back to you shortly!\n\nBest regards,\nLocal Services Team`
-        };
-
-        // Send acknowledgment email
-        await transporter.sendMail(userMailOptions);
-
-        // 2. Forward the user's message to the support team
-        const supportMailOptions = {
-            from: email,
-            to: 'ankuryadav89666@gmail.com.com',  // Support team email
-            subject: `New Contact Form Message from ${name}`,
-            text: `You have received a new message from ${name} (${email}):\n\n"${message}"`
-        };
-
-        // Send the message to the support team
-        await transporter.sendMail(supportMailOptions);
-
-        // Send a response back to the frontend (for AJAX success handling)
-        res.status(200).send('Your message has been sent successfully!');
-    } catch (error) {
-        console.error('Error handling contact form submission:', error);
-        res.status(500).send('Server error. Please try again later.');
+        const users = await db.collection('users').find().toArray();
+        res.json(users);
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).send('Error fetching users');
     }
 });
 
+// Add a customer
+app.post('/admin/add-customer', async (req, res) => {
+    const { email, username, address, phone, password } = req.body; // Include password
+
+    try {
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = {
+            email,
+            username,
+            address,
+            phone,
+            password: hashedPassword, // Store hashed password
+            role: 'customer'
+        };
+
+        const result = await db.collection('users').insertOne(newUser);
+        console.log('Customer added:', result);
+        res.send('Customer added successfully');
+    } catch (err) {
+        console.error('Error adding customer:', err);
+        res.status(500).send('Error adding customer: ' + err.message);
+    }
+});
+
+// Add a service provider
+app.post('/admin/add-provider', async (req, res) => {
+    try {
+        const { email, username, service_type, password } = req.body;
+
+        // Validate input
+        if (!email || !username || !service_type || !password) {
+            return res.status(400).send('Email, username, service type, and password are required.');
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10); // Hash password
+
+        const newUser = {
+            email,
+            username,
+            service_type,
+            password: hashedPassword, // Store hashed password
+            role: 'service_provider'
+        };
+
+        const result = await db.collection('users').insertOne(newUser);
+        console.log('Service Provider added:', result);
+        res.send('Service Provider added successfully');
+    } catch (err) {
+        console.error('Error adding service provider:', err);
+        res.status(500).send('Error adding service provider: ' + err.message);
+    }
+});
+
+
+app.post('/admin/update-user/:id', async (req, res) => {
+    const userId = req.params.id;
+    const role = req.body.role; // Get role from request body
+
+    // Prepare fields to update based on the role
+    const updateFields = {
+        email: req.body.email,
+        username: req.body.username,
+    };
+
+    // Update fields based on the role
+    if (role === 'customer') {
+        updateFields.address = req.body.address;
+        updateFields.phone = req.body.phone;
+    } else if (role === 'service_provider') {
+        updateFields.service_type = req.body.service_type;
+    }
+
+    try {
+        const objectId = new ObjectId(userId);
+        await db.collection('users').updateOne({ _id: objectId }, { $set: updateFields });
+        console.log('User updated:', userId);
+        res.send('User updated successfully');
+    } catch (err) {
+        console.error('Error updating user:', err);
+        res.status(500).send('Error updating user: ' + err.message);
+    }
+});
+
+
+// Delete a user
+app.delete('/admin/delete-user/:id', async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        const objectId = new ObjectId(userId);
+        await db.collection('users').deleteOne({ _id: objectId });
+        console.log('User deleted:', userId);
+        res.send('User deleted successfully');
+    } catch (err) {
+        console.error('Error deleting user:', err);
+        res.status(500).send('Error deleting user: ' + err.message); // Log detailed error
+    }
+});
 
 // Service Submission Route
 app.post('/submit-service', async (req, res) => {

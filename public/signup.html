@@ -21,6 +21,7 @@
                     <option value="" disabled selected>Select your role</option>
                     <option value="customer">Customer</option>
                     <option value="service_provider">Service Provider</option>
+                    <option value="admin">Admin</option>
                 </select>
                 
                 <div id="customer-fields" class="role-specific-fields">
@@ -71,17 +72,38 @@
         });
 
         roleSelect.addEventListener('change', function() {
-            if (this.value === 'customer') {
-                customerFields.style.display = 'block';
-                serviceProviderFields.style.display = 'none';
+        if (this.value === 'customer') {
+        customerFields.style.display = 'block';
+        serviceProviderFields.style.display = 'none';
+        adminFields.style.display = 'none';
 
         // Remove required attribute for service provider fields
-                countrySelect.removeAttribute('required');
-                locationSelect.removeAttribute('required');
-                serviceTypeSelect.removeAttribute('required');
-            } else if (this.value === 'service_provider') {
-                customerFields.style.display = 'none';
-                serviceProviderFields.style.display = 'block';
+        countrySelect.removeAttribute('required');
+        locationSelect.removeAttribute('required');
+        serviceTypeSelect.removeAttribute('required');
+
+    } else if (this.value === 'service_provider') {
+        customerFields.style.display = 'none';
+        serviceProviderFields.style.display = 'block';
+        adminFields.style.display = 'none';
+
+        // Add required attribute for service provider fields
+        countrySelect.setAttribute('required', 'required');
+        locationSelect.setAttribute('required', 'required');
+        serviceTypeSelect.setAttribute('required', 'required');
+
+    } else if (this.value === 'admin') {
+        customerFields.style.display = 'none';
+        serviceProviderFields.style.display = 'none';
+        adminFields.style.display = 'block';
+
+        // Remove required attribute for both customer and service provider fields
+        countrySelect.removeAttribute('required');
+        locationSelect.removeAttribute('required');
+        serviceTypeSelect.removeAttribute('required');
+    
+
+
 
         // Add required attribute for service provider fields
                 countrySelect.setAttribute('required', true);
